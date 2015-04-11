@@ -7,7 +7,7 @@ App.TaskView = Ember.View.extend({
 	actions: {
 		toggleDone: function() {
 			if (this.get('readOnly')) { return; }
-			this.task.set('done', !this.task.get('done'));
+			this.task.toggleDone();
 			// FIXME: this assumes no errors occured...
 			this.get('controller').send('doneHasChanged', this.task);
 		},

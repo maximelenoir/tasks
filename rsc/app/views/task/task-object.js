@@ -29,6 +29,21 @@ App.Task = Ember.Object.extend({
 				error('Delete error', x);
 			});
 	},
+	toggleDone: function() {
+		if (this.get('done')) {
+			this.setProperties({
+				'done': false,
+				'completedOn': zero,
+			});
+		} else {
+			this.setProperties({
+				'done': true,
+				'alarmOn': zero,
+				'pinned': false,
+				'completedOn': moment(),
+			});
+		}
+	},
 	onChange: function() {
 		this.set('updatedOn', moment());
 		this.save();

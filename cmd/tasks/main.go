@@ -130,12 +130,6 @@ func jsonSave(w http.ResponseWriter, req *http.Request, tasks Tasks) {
 		return
 	}
 
-	switch {
-	case !orig.Done && task.Done:
-		task.CompletedOn = time.Now()
-	case orig.Done && task.Done:
-		task.CompletedOn = time.Time{}
-	}
 	tasks.Set(task)
 	tasks.Save()
 }
