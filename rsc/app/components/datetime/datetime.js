@@ -54,6 +54,7 @@ App.DatetimeView = Ember.View.extend({
 					'«' + self.title + '» is due now (' +
 					alarmOn.format('MMMM Do YYYY @ HH:mm') + ')'
 				);
+				self.get('parentView').send('alarmTriggered');
 			}, waitFor);
 		}
 	}.observes('alarmOn'),

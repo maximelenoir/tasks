@@ -22,7 +22,10 @@ App.TaskView = Ember.View.extend({
 			}).done(function(_task) {
 				self.task.set('links', _task.links);
 			}).fail(function(x) { error('Deleting file', x); });
-		}	
+		},
+		alarmTriggered: function() {
+			this.task.incrementProperty('triggered');
+		},
 	},
 	dragEnter: function(ev) {
 		ev.effectAllowed = 'copy';

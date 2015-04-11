@@ -8,6 +8,7 @@ App.Task = Ember.Object.extend({
 	done: null,
 	details: 'No description',
 	links: null,
+	triggered: 0,
 	api: function(method) {
 		return $.ajax({
 			type: 'POST',

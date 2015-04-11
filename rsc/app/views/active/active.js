@@ -13,7 +13,7 @@ App.ActiveRoute = Ember.Route.extend({
 App.ActiveController = Ember.ArrayController.extend({
 	taskName: null,
 	sortAscending: true,
-	sortProperties: ['pinned', 'alarmOn', 'updatedOn'], // Observes only.
+	sortProperties: ['pinned', 'alarmOn', 'triggered', 'updatedOn'], // Observes only.
 	orderBy: function(tl, tr) {
 		var pl = tl.get('pinned');
 		var pr = tr.get('pinned');
