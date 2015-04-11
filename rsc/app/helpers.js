@@ -19,7 +19,10 @@ Ember.Handlebars.helper('rich-text', function(text, links) {
 				var link = t.slice(1);
 				if (link in links) {
 					return '<span class="label label-default">'+
-							'<a href="'+eurl(links[link])+'">'+etxt(link)+'</a>'+
+							'<a href="'+eurl(links[link])+'">'+
+								'<span class="glyphicon glyphicon-link"></span> '+
+								etxt(link)+
+							'</a>'+
 							'</span>';
 				}
 				return t;

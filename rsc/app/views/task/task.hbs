@@ -32,9 +32,14 @@
 	{{#each link in view.task.links}}
 	<span class="label label-default">
 		{{#unless view.readOnly}}
-		<a {{action "unlink" link target=view}}><span class="glyphicon glyphicon-remove"></span></a>
+		<a {{bind-attr href=link.href}}>
+			<span class="glyphicon glyphicon-link"></span>
+			{{link.name}}
+		</a>
+		<a {{action "unlink" link target=view}}>
+			<span class="glyphicon glyphicon-remove"></span>
+		</a>
 		{{/unless}}
-		<a {{bind-attr href=link.href}}>{{link.name}}</a>
 	</span>
 	{{/each}}
 </div>
