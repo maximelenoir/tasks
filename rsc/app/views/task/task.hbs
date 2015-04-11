@@ -13,11 +13,9 @@
 			{{ago view.task.updatedOn}}
 			{{/if}}
 		</small>
-		{{#unless view.readOnly}}
-		{{datetime alarmOn=view.task.alarmOn title=view.task.name}}
+		{{datetime alarmOn=view.task.alarmOn title=view.task.name readOnly=view.readOnly}}
 		<i {{action "togglePin" target="view"}} {{bind-attr class=":glyphicon :glyphicon-pushpin :clickable view.task.pinned:pinned:pin"}}></i>
-		<i {{action "removeTask" view.task}} class="glyphicon glyphicon-remove clickable remove"></i>
-		{{/unless}}
+		<i {{action "remove" target="view"}} class="glyphicon glyphicon-remove clickable remove"></i>
 	</span>
 </div>
 

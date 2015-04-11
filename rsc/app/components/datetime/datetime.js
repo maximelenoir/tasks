@@ -10,6 +10,7 @@ App.DatetimeView = Ember.View.extend({
 	container: null,
 	alarmtimeout: null,
 	revision: 0,
+	readOnly: false,
 
 	alarmClass: function() {
 		return this.alarmStatus();
@@ -39,6 +40,7 @@ App.DatetimeView = Ember.View.extend({
 		this.setAlarm();
 	},
 	setAlarm: function() {
+		if (this.get('readOnly')) { return; }
 		if (this.alarmtimeout) { window.clearTimeout(this.alarmtimeout); }
 		var alarmOn = moment(this.get('alarmOn'));
 		if (alarmOn.zero()) {
@@ -68,6 +70,8 @@ App.DatetimeView = Ember.View.extend({
 		this.set('editing', false);
 	},
 	click: function() {
+		if (this.get('readOnly')) { return; }
+
 		if (this.get('editing')) {
 			this.done();
 			return;

@@ -1,6 +1,6 @@
 {{#if view.editing}}
 	{{std-area value=view.edited submitted=view.submitted width=view.width height=view.height empty=view.empty}}
 {{else}}
-	{{rich-text-area text=view.value links=view.links}}
+	{{rich-text-area text=view.value links=view.links readOnly=view.readOnly}}
 {{/if}}
 

@@ -4,6 +4,7 @@ App.RichTextAreaView = Ember.View.extend({
 	links: null,
 	unchecked: null,
 	checked: null,
+	readOnly: false,
 	defaultTemplate: Ember.Handlebars.compile('{{{view.richtext}}}'),
 	change: function(ev) {
 		var checkbox = $(ev.target);
@@ -23,6 +24,7 @@ App.RichTextAreaView = Ember.View.extend({
 		return this.transform(text, links);
 	}.property('text'),
 	transform: function(text, links) {
+		var ro = this.get('readOnly');
 		links = (links || []).reduce(function(links, link) {
 			links[link.name] = link.href;
 			return links;
@@ -70,10 +72,10 @@ App.RichTextAreaView = Ember.View.extend({
 					return t;
 				})
 				.replace(/^\[ \] .*$/, function(t) {
-					return '<input type="checkbox" data-line="'+state.line+'"> '+t.slice(4);
+					return '<input type="checkbox" data-line="'+state.line+'" '+(ro ? 'disabled' : '')+'> '+t.slice(4);
 				})
 				.replace(/^\[x\] .*$/, function(t) {
-					return '<input type="checkbox" data-line="'+state.line+'" checked> <s>'+t.slice(4)+'</s>';
+					return '<input type="checkbox" data-line="'+state.line+'" checked '+(ro ? 'disabled' : '')+'> <s>'+t.slice(4)+'</s>';
 				})
 				.replace(/"""/g, function(t) {
 					t = state.quoting ? '</blockquote>' : '<blockquote>';

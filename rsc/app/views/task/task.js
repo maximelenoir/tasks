@@ -6,14 +6,21 @@ App.TaskView = Ember.View.extend({
 	readOnly: false,
 	actions: {
 		toggleDone: function() {
+			if (this.get('readOnly')) { return; }
 			this.task.set('done', !this.task.get('done'));
 			// FIXME: this assumes no errors occured...
 			this.get('controller').send('doneHasChanged', this.task);
 		},
 		togglePin: function() {
+			if (this.get('readOnly')) { return; }
 			this.task.set('pinned', !this.task.get('pinned'));
 		},
+		remove: function() {
+			if (this.get('readOnly')) { return; }
+			this.get('controller').send('removeTask', this.task);
+		},
 		unlink: function(link) {
+			if (this.get('readOnly')) { return; }
 			var self = this;
 			$.ajax({
 				url: '/unlink/'+this.task.id+'/'+link.name,
