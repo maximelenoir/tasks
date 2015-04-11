@@ -1,0 +1,41 @@
+<div class="header" {{bind-attr id=task.id}}>
+	<span class="left">
+		<i {{action "toggleDone" target="view"}} {{bind-attr class=":glyphicon :glyphicon-ok :clickable view.task.done:done:do"}}></i>
+		<span class="space"></span>
+		{{editable-input value=view.task.name readOnly=view.readOnly empty="No name"}}
+	</span>
+	<span class="inline">
+		<span class="separator"></span>
+		<small>
+			{{#if view.task.done}}
+			{{ago view.task.completedOn}}
+			{{else}}
+			{{ago view.task.updatedOn}}
+			{{/if}}
+		</small>
+		{{#unless view.readOnly}}
+		{{datetime alarmOn=view.task.alarmOn title=view.task.name}}
+		<i {{action "togglePin" target="view"}} {{bind-attr class=":glyphicon :glyphicon-pushpin :clickable view.task.pinned:pinned:pin"}}></i>
+		<i {{action "removeTask" view.task}} class="glyphicon glyphicon-remove clickable remove"></i>
+		{{/unless}}
+	</span>
+</div>
+
+<hr/>
+<div class="details">
+	{{editable-area value=view.task.details links=view.task.links readOnly=view.readOnly empty="No description"}}
+</div>
+
+{{#if view.task.links}}
+<hr/>
+<div class="link-container">
+	{{#each link in view.task.links}}
+	<span class="label label-default">
+		{{#unless view.readOnly}}
+		<a {{action "unlink" link target=view}}><span class="glyphicon glyphicon-remove"></span></a>
+		{{/unless}}
+		<a {{bind-attr href=link.href}}>{{link.name}}</a>
+	</span>
+	{{/each}}
+</div>
+{{/if}}

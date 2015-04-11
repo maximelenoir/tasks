@@ -1,0 +1,83 @@
+.task {
+	padding: 15px;
+	margin: 10px;
+	background-color: #fff;
+	box-shadow: 0 2px 5px #888;
+	width: 50%;
+	align-self: auto;
+	border-radius: 2px;
+}
+.task.accepting {
+	box-shadow: 0 2px 20px #33f;
+}
+.task hr {
+	margin: 7px 0;
+}
+.task ul {
+	padding-left: 10px;
+	list-style-position: inside;
+	margin: 0;
+}
+.task h1,
+.task h2,
+.task h3,
+.task h4,
+.task h5 {
+	margin: 0;
+	padding: 0;
+}
+.task blockquote {
+	font-size: smaller;
+	margin: 0px;
+	padding-left: 10px;
+	font-family: 'Monospace';
+}
+.task .link-container span.label {
+	margin-right: 5px;
+}
+.task span.label a,
+.task span.label a:hover {
+	text-decoration: none;
+	cursor: pointer;
+	color: #fff;
+}
+.task .header {
+	display:flex;
+	justify-content: space-between;
+}
+.task .header .left {
+	width: 50%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.task .inline {
+	white-space: nowrap;
+	display: inline;
+}
+.task .space {
+	margin-left: 5px;
+}
+.task .separator::before {
+	margin-left: 5px;
+	content: ' | ';
+	color: #ddd;
+}
+.task .done,
+.task .do:hover {
+	color: #5cb85c;
+}
+.task .do,
+.task .done:hover,
+.task .pin,
+.task .pinned:hover,
+.task .remove {
+	color: #777;
+}
+.task .remove:hover {
+	color: #d9534f;
+}
+.task .pinned,
+.task .pin:hover {
+	color: #337ab7;
+}

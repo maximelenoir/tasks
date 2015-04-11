@@ -1,0 +1,33 @@
+<nav class="navbar navbar-inverse navbar-fixed-top">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">Tasks</a>
+		</div>
+		<div id="navbar" class="navbar-collapse collapse">
+			<ul class="nav navbar-nav navbar-right">
+				<li>{{#link-to "help"}}Help{{/link-to}}</li>
+			</ul>
+			<!--
+			<form class="navbar-form navbar-right">
+				<div class="form-group has-feedback">
+					<input type="text" class="form-control" placeholder="Search...">
+					<span class="glyphicon glyphicon-search form-control-feedback"></span>
+				</div>
+			</form>
+			-->
+		</div>
+	</div>
+</nav>
+<div class="fluid-container">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<ul class="nav nav-sidebar">
+				<li>{{#link-to "active"}}<span class="glyphicon glyphicon-tasks"></span> Active{{/link-to}}</li>
+				<li>{{#link-to "completed"}}<span class="glyphicon glyphicon-check"></span> Completed{{/link-to}}</li>
+			</ul>
+		</div>
+		<div class="col-md-10 col-md-offset-2 main">
+			{{outlet}}
+		</div>
+	</div>		
+</div>		

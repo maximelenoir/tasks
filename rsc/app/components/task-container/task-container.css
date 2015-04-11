@@ -1,0 +1,7 @@
+.task-container {
+	bottom: 0px;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+}

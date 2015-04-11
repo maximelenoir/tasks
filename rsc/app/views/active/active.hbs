@@ -1,0 +1,7 @@
+{{input class="form-control" value=taskName action="newTask" on="enter" placeholder="New task..."}}
+<br/>
+{{#if controller}}
+{{view "task-container" tasks=controller}}
+{{else}}
+<h1 class="text-center">Nothing to do 😃</h1>
+{{/if}}

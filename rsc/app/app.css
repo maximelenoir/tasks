@@ -1,0 +1,11 @@
+body {
+	padding-top: 50px;
+}
+.clickable {
+	cursor: pointer;
+	font-size: small;
+	vertical-align: center;
+}
+.clickable:hover {
+	text-shadow: 0px 0px 3px;
+}

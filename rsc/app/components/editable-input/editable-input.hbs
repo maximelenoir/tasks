@@ -1,0 +1,5 @@
+{{#if view.editing}}
+	{{std-input value=view.edited submitted=view.submitted width=view.width empty=view.empty}}
+{{else}}
+	{{view.value}}
+{{/if}}

@@ -1,0 +1,45 @@
+.program {
+	color: #777;
+}
+.programmed,
+.programmed:hover,
+.program:hover {
+	color: #f0ad4e;
+}
+.triggered,
+.triggered:hover {
+	color: #d9534f;
+	-webkit-animation: ring 2s infinite;
+	animation: ring 2s infinite;
+}
+@-webkit-keyframes ring {
+	0% { -webkit-transform: scale(1, 1); }
+	5% { -webkit-transform: scale(2, 2); }
+	10% { -webkit-transform: scale(1, 1); }
+	100% { -webkit-transform: scale(1, 1); }
+}
+@keyframes ring {
+	0% { transform: scale(1, 1); }
+	5% { transform: scale(2, 2); }
+	10% { transform: scale(1, 1); }
+	100% { transform: scale(1, 1); }
+}
+/* Datetime picker */
+.prev,
+.next {
+	font-family: 'Glyphicons Halflings';
+}
+.next:before {
+	content: '\e080';
+}
+.prev:before {
+	content: '\e079';
+}
+.datetimepicker-inline {
+	box-shadow: none;
+}
+.datetimepicker-container {
+	background-color: #fff;
+	box-shadow: 0 2px 5px #888;
+	border-radius: 2px;
+}
