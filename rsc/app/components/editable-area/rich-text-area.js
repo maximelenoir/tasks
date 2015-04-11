@@ -19,11 +19,11 @@ App.RichTextAreaView = Ember.View.extend({
 		this.set('text', lines.join('\n'));
 	},
 	richtext: function() {
+		return this.transform();
+	}.property('text'),
+	transform: function() {
 		var text = this.get('text');
 		var links = this.get('links');
-		return this.transform(text, links);
-	}.property('text'),
-	transform: function(text, links) {
 		var ro = this.get('readOnly');
 		links = (links || []).reduce(function(links, link) {
 			links[link.name] = link.href;
