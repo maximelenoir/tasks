@@ -31,11 +31,11 @@
 <div class="link-container">
 	{{#each link in view.task.links}}
 	<span class="label label-default">
-		{{#unless view.readOnly}}
 		<a {{bind-attr href=link.href}}>
 			<span class="glyphicon glyphicon-link"></span>
 			{{link.name}}
 		</a>
+		{{#unless view.readOnly}}
 		<a {{action "unlink" link target=view}}>
 			<span class="glyphicon glyphicon-remove"></span>
 		</a>
