@@ -31,6 +31,8 @@ App.HelpRoute = Ember.Route.extend({
 				'An alternative name can also be given by prefixing with ||name:|| like this:http://www.google.com.',
 				'* There are automatic mapping from ascii compound to unicode such as =>, ->, :), :( and ;).',
 				'* ||todo\\:|| and ||fixme\\:|| outputs colorful labels: todo: and fixme: respectively.',
+				'* Use ||\\[ \\] || and ||\\[x\\] || at the beginning of a line to generate checkboxes. '+
+				'On click, the description will be automatically changed.',
 				'* Put ||\\"\\"\\"|| around text that is a quotation or a code snippet. '+
 				'Monospace font is used. Note that this quotation is not inline.',
 				'',

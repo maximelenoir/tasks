@@ -1,8 +1,6 @@
 {{#if view.editing}}
 	{{std-area value=view.edited submitted=view.submitted width=view.width height=view.height empty=view.empty}}
 {{else}}
-	<div>
-	{{{rich-text view.value view.links}}}
-	</div>
+	{{rich-text-area text=view.value links=view.links}}
 {{/if}}
 
