@@ -1,14 +1,25 @@
 .task {
+	margin: 15px;
 	padding: 15px;
-	margin: 10px;
 	background-color: #fff;
 	box-shadow: 0 2px 5px #888;
-	width: 50%;
+	width: 90%;
 	align-self: auto;
 	border-radius: 2px;
 }
+.task .inner {
+	overflow: hidden;
+}
+.task:hover {
+	box-shadow: 0 4px 8px #888;
+}
+@media (min-width: 768px) {
+	.task {
+		width: 50%;
+	}
+}
 .task.accepting {
-	box-shadow: 0 2px 20px #33f;
+	box-shadow: 0 5px 10px #888;
 }
 .task hr {
 	margin: 7px 0;
@@ -25,6 +36,10 @@
 .task h5 {
 	margin: 0;
 	padding: 0;
+}
+.task .details {
+	overflow-x: hidden;
+	text-overflow: ellipsis;
 }
 .task blockquote {
 	font-size: smaller;
