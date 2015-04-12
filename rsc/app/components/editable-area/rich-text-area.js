@@ -127,7 +127,11 @@ eurl = encodeURIComponent;
 etxt = function(txt) {
 	var e = '';
 	for (var i = 0; i < txt.length; i++) {
-		e += '&#x' + txt.charCodeAt(i).toString(16) + ';';
+		var c = txt.charCodeAt(i);
+		e += '&#x' + c.toString(16) + ';';
+		if (c == 47) {
+			e += '&#8203;';
+		}
 	}
 	return e;
 }
