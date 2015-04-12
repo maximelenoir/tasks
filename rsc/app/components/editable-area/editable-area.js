@@ -28,6 +28,8 @@ App.AreaView = Ember.View.extend({
 	},
 });
 
+// TODO: derive from EditableInputView or
+// create a common parent class.
 App.EditableAreaView = Ember.View.extend({
 	tagName: 'div',
 	edited: null,
@@ -40,6 +42,7 @@ App.EditableAreaView = Ember.View.extend({
 	width: null,
 	height: null,
 	templateName: 'editable-area',
+	editingTimeout: null,
 	onEdited: function() {
 		if (this.get('editing')) {
 			// edited change when the input changed.
@@ -51,6 +54,22 @@ App.EditableAreaView = Ember.View.extend({
 		};
 	}.observes('edited', 'submitted'),
 	doubleClick: function(ev) {
+		this.startEditing();
+	},
+	touchStart: function(ev) {
+		var self = this;
+		this.editingTimeout = window.setTimeout(function() {
+			self.editingTimeout = null;
+			self.startEditing();
+		}, 1000);
+	},
+	touchEnd: function(ev) {
+		if (this.editingTimeout) {
+			window.clearTimeout(this.editingTimeout);
+			this.editingTimeout = null;
+		}
+	},
+	startEditing: function() {
 		if (this.get('readOnly')) { return; }
 		if (!this.get('editing')) {
 			this.set('width', this.$().parent().width());
