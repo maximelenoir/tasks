@@ -38,6 +38,7 @@ func main() {
 	r.HandleFunc("/", logReq(htmlIndex))
 	r.HandleFunc("/new", logReq(hookTasks(tasks, jsonNewTask)))
 	r.HandleFunc("/tasks", logReq(hookTasks(tasks, jsonTasks)))
+	r.HandleFunc("/search", logReq(hookTasks(tasks, jsonSearch)))
 	r.HandleFunc("/save/{id}", logReq(hookTasks(tasks, jsonSave)))
 	r.HandleFunc("/delete/{id}", logReq(hookTasks(tasks, jsonDelete)))
 	r.HandleFunc("/link/{id}", logReq(hookTasks(tasks, jsonLink)))
@@ -106,6 +107,20 @@ func jsonTasks(w http.ResponseWriter, req *http.Request, tasks Tasks) {
 	json.NewEncoder(w).Encode(tasks.Slice())
 }
 
+func jsonSearch(w http.ResponseWriter, req *http.Request, tasks Tasks) {
+	var terms []string
+	if err := json.NewDecoder(req.Body).Decode(&terms); err != nil {
+		sendErr(w, http.StatusBadRequest, err)
+		return
+	}
+
+	matches := tasks.Search(terms)
+
+	if err := json.NewEncoder(w).Encode(matches); err != nil {
+		sendErr(w, http.StatusInternalServerError, err)
+	}
+}
+
 func jsonSave(w http.ResponseWriter, req *http.Request, tasks Tasks) {
 	id, ok := mux.Vars(req)["id"]
 	if !ok {
@@ -130,6 +145,7 @@ func jsonSave(w http.ResponseWriter, req *http.Request, tasks Tasks) {
 		return
 	}
 
+	task.Update()
 	tasks.Set(task)
 	tasks.Save()
 }

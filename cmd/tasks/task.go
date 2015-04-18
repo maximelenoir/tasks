@@ -5,8 +5,10 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
+	"unicode"
 )
 
 type Task struct {
@@ -20,6 +22,7 @@ type Task struct {
 	Done        bool      `json:"done"`
 	Details     string    `json:"details"`
 	Links       []Link    `json:"links"`
+	content     *Trie
 }
 
 type Link struct {
@@ -35,6 +38,26 @@ func (t Task) Link(name string) (Link, bool) {
 		}
 	}
 	return Link{}, false
+}
+
+func (t *Task) Update() {
+	t.content = &Trie{}
+	for _, indexed := range []string{t.Name, t.Details} {
+		for _, chunk := range strings.FieldsFunc(indexed, func(r rune) bool {
+			return unicode.IsPunct(r) || unicode.IsSpace(r)
+		}) {
+			t.content.Add(chunk)
+		}
+	}
+}
+
+func (t Task) Match(terms []string) bool {
+	for _, term := range terms {
+		if !t.content.HasPrefix(term) {
+			return false
+		}
+	}
+	return true
 }
 
 type Tasks struct {
@@ -98,6 +121,7 @@ func (t Tasks) Load() {
 	}
 
 	for _, task := range tasks {
+		task.Update()
 		t.Tasks[task.Id] = task
 	}
 
@@ -112,4 +136,14 @@ func (t Tasks) Slice() []Task {
 		tasks = append(tasks, task)
 	}
 	return tasks
+}
+
+func (t Tasks) Search(terms []string) []Task {
+	var matches []Task
+	for _, task := range t.Tasks {
+		if task.Match(terms) {
+			matches = append(matches, task)
+		}
+	}
+	return matches
 }

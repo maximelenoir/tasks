@@ -7,6 +7,12 @@
 			<ul class="nav navbar-nav navbar-right">
 				<li>{{#link-to "help"}}Help{{/link-to}}</li>
 			</ul>
+			<form class="navbar-form navbar-right">
+				<div class="form-group has-feedback">
+					{{input type="text" class="form-control" value=search placeholder="Search..."}}
+					<span class="glyphicon glyphicon-search form-control-feedback"></span>
+				</div>
+			</form>
 		</div>
 	</div>
 </nav>
@@ -20,7 +26,16 @@
 			</ul>
 		</div>
 		<div class="col-md-10 col-md-offset-2 main">
+			{{#if controller.searching}}
+				{{#if controller.results}}
+					{{view "task-container" tasks=controller.results}}
+				{{else}}
+					<h1 class="text-center">No match</h1>
+				{{/if}}
+			{{/if}}
+			<div {{bind-attr class="controller.searching:hidden"}}>
 			{{outlet}}
+			</div>
 		</div>
 	</div>		
 </div>		
