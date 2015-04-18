@@ -3,7 +3,11 @@ App.TaskView = Ember.View.extend({
 	templateName: 'task',
 	tagName: 'div',
 	classNames: ['task'],
+	attributeBindings: ['id:data-task-id'],
 	readOnly: false,
+	id: function() {
+		return this.task.get('id');
+	}.property('task.id'),
 	actions: {
 		toggleDone: function() {
 			if (this.get('readOnly')) { return; }

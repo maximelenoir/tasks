@@ -10,8 +10,7 @@ App = Ember.Application.create({
 App.deferReadiness();
 
 App.Router.map(function() {
-	this.resource('active');
-	this.resource('completed');
+	this.resource('tasks');
 	this.resource('help');
 });
 
