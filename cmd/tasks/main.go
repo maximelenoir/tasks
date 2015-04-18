@@ -18,12 +18,18 @@ import (
 var (
 	dataRootDir   string
 	addr          string
+	https         bool
+	tlsCert       string
+	tlsKey        string
 	tasksFilename = "tasks.json"
 )
 
 func init() {
 	flag.StringVar(&dataRootDir, "data-dir", "data", "Data root directory")
 	flag.StringVar(&addr, "addr", ":80", "Listening address")
+	flag.BoolVar(&https, "https", false, "Enable HTTPS")
+	flag.StringVar(&tlsCert, "tsl-cert", "etc/server.crt", "TLS certificate")
+	flag.StringVar(&tlsKey, "tsl-key", "etc/server.key", "TLS private key")
 	flag.Parse()
 }
 
@@ -45,7 +51,18 @@ func main() {
 	r.HandleFunc("/unlink/{id}/{link}", logReq(hookTasks(tasks, jsonUnlink)))
 	r.HandleFunc("/file/{id}/{link}", logReq(hookTasks(tasks, jsonFile)))
 	r.PathPrefix("/rsc").Handler(http.StripPrefix("/", http.FileServer(http.Dir("."))))
-	log.Println(http.ListenAndServe(addr, r))
+
+	srv := http.Server{
+		Addr:    addr,
+		Handler: r,
+	}
+	var err error
+	if https {
+		err = srv.ListenAndServeTLS(tlsCert, tlsKey)
+	} else {
+		err = srv.ListenAndServe()
+	}
+	log.Println(err)
 }
 
 func sendErr(w http.ResponseWriter, status int, err error) {
