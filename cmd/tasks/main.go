@@ -22,8 +22,8 @@ var (
 )
 
 func init() {
-	flag.StringVar(&dataRootDir, "-data-dir", "data", "Data root directory")
-	flag.StringVar(&addr, "-addr", ":8888", "Listening address")
+	flag.StringVar(&dataRootDir, "data-dir", "data", "Data root directory")
+	flag.StringVar(&addr, "addr", ":80", "Listening address")
 	flag.Parse()
 }
 

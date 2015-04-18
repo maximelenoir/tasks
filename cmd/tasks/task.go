@@ -104,6 +104,10 @@ func (t Tasks) Save() {
 }
 
 func (t Tasks) Load() {
+	if err := os.MkdirAll(dataRootDir, 0755); err != nil {
+		log.Printf("could not create data dir: %s\n", err)
+		return
+	}
 	filename := filepath.Join(dataRootDir, tasksFilename)
 
 	f, err := os.Open(filename)
