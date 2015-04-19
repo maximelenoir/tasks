@@ -35,11 +35,12 @@ func init() {
 func main() {
 	flag.Parse()
 
-	tasks := Tasks{
-		Tasks: make(map[string]Task),
-	}
-	tasks.Load()
-	defer tasks.Save()
+	tasks := make(map[string]*Tasks)
+	defer func() {
+		for _, userTasks := range tasks {
+			userTasks.Save()
+		}
+	}()
 
 	LoadUsers()
 
@@ -79,8 +80,8 @@ func sendErr(w http.ResponseWriter, status int, err error) {
 	json.NewEncoder(w).Encode(Error{Err: err.Error()})
 }
 
-type handlerTask func(w http.ResponseWriter, req *http.Request, task Task)
-type handlerTasks func(w http.ResponseWriter, req *http.Request, tasks Tasks)
+type handlerTasks func(w http.ResponseWriter, req *http.Request, tasks *Tasks)
+type handlerUser func(w http.ResponseWriter, req *http.Request, user *User)
 
 func logReq(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
@@ -90,24 +91,37 @@ func logReq(h http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func hookTasks(tasks Tasks, h handlerTasks) http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
-		h(w, req, tasks)
+func hookTasks(tasks map[string]*Tasks, h handlerTasks) handlerUser {
+	return func(w http.ResponseWriter, req *http.Request, user *User) {
+		// FIXME: mutex
+		userTasks, ok := tasks[user.Name]
+		if !ok {
+			userTasks = &Tasks{User: user}
+			userTasks.Load()
+			tasks[user.Name] = userTasks
+		}
+		h(w, req, userTasks)
 	}
 }
 
-func ensureLoggedIn(h http.HandlerFunc) http.HandlerFunc {
+func ensureLoggedIn(h func(http.ResponseWriter, *http.Request, *User)) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		token, err := req.Cookie("token")
-		if err != nil || !Accept(token.Value) {
+		if err != nil {
 			http.Redirect(w, req, "/login", http.StatusTemporaryRedirect)
 			return
 		}
-		h(w, req)
+		user, accepted := Accept(token.Value)
+		if !accepted {
+			http.Redirect(w, req, "/login", http.StatusTemporaryRedirect)
+			return
+		}
+
+		h(w, req, user)
 	}
 }
 
-func htmlIndex(w http.ResponseWriter, req *http.Request) {
+func htmlIndex(w http.ResponseWriter, req *http.Request, _ *User) {
 	http.ServeFile(w, req, "rsc/app/index.html")
 }
 
@@ -133,7 +147,7 @@ func htmlLogin(w http.ResponseWriter, req *http.Request) {
 	http.Redirect(w, req, "/", http.StatusTemporaryRedirect)
 }
 
-func jsonNewTask(w http.ResponseWriter, req *http.Request, tasks Tasks) {
+func jsonNewTask(w http.ResponseWriter, req *http.Request, tasks *Tasks) {
 	var id string
 	for {
 		t, _ := time.Now().MarshalBinary()
@@ -157,11 +171,11 @@ func jsonNewTask(w http.ResponseWriter, req *http.Request, tasks Tasks) {
 	}
 }
 
-func jsonTasks(w http.ResponseWriter, req *http.Request, tasks Tasks) {
+func jsonTasks(w http.ResponseWriter, req *http.Request, tasks *Tasks) {
 	json.NewEncoder(w).Encode(tasks.Slice())
 }
 
-func jsonSearch(w http.ResponseWriter, req *http.Request, tasks Tasks) {
+func jsonSearch(w http.ResponseWriter, req *http.Request, tasks *Tasks) {
 	var terms []string
 	if err := json.NewDecoder(req.Body).Decode(&terms); err != nil {
 		sendErr(w, http.StatusBadRequest, err)
@@ -175,7 +189,7 @@ func jsonSearch(w http.ResponseWriter, req *http.Request, tasks Tasks) {
 	}
 }
 
-func jsonSave(w http.ResponseWriter, req *http.Request, tasks Tasks) {
+func jsonSave(w http.ResponseWriter, req *http.Request, tasks *Tasks) {
 	id, ok := mux.Vars(req)["id"]
 	if !ok {
 		sendErr(w, http.StatusBadRequest, fmt.Errorf("no id specified"))
@@ -204,7 +218,7 @@ func jsonSave(w http.ResponseWriter, req *http.Request, tasks Tasks) {
 	tasks.Save()
 }
 
-func jsonDelete(w http.ResponseWriter, req *http.Request, tasks Tasks) {
+func jsonDelete(w http.ResponseWriter, req *http.Request, tasks *Tasks) {
 	id, ok := mux.Vars(req)["id"]
 	if !ok {
 		sendErr(w, http.StatusBadRequest, fmt.Errorf("no id specified"))
@@ -222,7 +236,7 @@ func jsonDelete(w http.ResponseWriter, req *http.Request, tasks Tasks) {
 	tasks.Save()
 }
 
-func jsonLink(w http.ResponseWriter, req *http.Request, tasks Tasks) {
+func jsonLink(w http.ResponseWriter, req *http.Request, tasks *Tasks) {
 	id, ok := mux.Vars(req)["id"]
 	if !ok {
 		sendErr(w, http.StatusBadRequest, fmt.Errorf("no id specified"))
@@ -252,13 +266,13 @@ func jsonLink(w http.ResponseWriter, req *http.Request, tasks Tasks) {
 		}
 		defer f.Close()
 
-		if err := os.MkdirAll(filepath.Join("data", task.Id), 0755); err != nil {
+		if err := os.MkdirAll(filepath.Join(dataRootDir, tasks.User.Name, task.Id), 0755); err != nil {
 			sendErr(w, http.StatusInternalServerError, err)
 			return
 		}
 
-		// Save the file in data/{id}/{name}
-		out, err := os.Create(filepath.Join("data", task.Id, name))
+		// Save the file in {datarootdir}/{user}/{id}/{name}
+		out, err := os.Create(filepath.Join(dataRootDir, tasks.User.Name, task.Id, name))
 		if err != nil {
 			sendErr(w, http.StatusInternalServerError, err)
 			return
@@ -287,7 +301,8 @@ func jsonLink(w http.ResponseWriter, req *http.Request, tasks Tasks) {
 		sendErr(w, http.StatusInternalServerError, err)
 	}
 }
-func jsonUnlink(w http.ResponseWriter, req *http.Request, tasks Tasks) {
+
+func jsonUnlink(w http.ResponseWriter, req *http.Request, tasks *Tasks) {
 	id, ok := mux.Vars(req)["id"]
 	if !ok {
 		sendErr(w, http.StatusBadRequest, fmt.Errorf("no id specified"))
@@ -308,7 +323,7 @@ func jsonUnlink(w http.ResponseWriter, req *http.Request, tasks Tasks) {
 		return
 	}
 
-	if err := os.Remove(filepath.Join("data", id, linkname)); err != nil {
+	if err := os.Remove(filepath.Join(dataRootDir, tasks.User.Name, id, linkname)); err != nil {
 		sendErr(w, http.StatusInternalServerError, err)
 		return
 	}
@@ -328,7 +343,7 @@ func jsonUnlink(w http.ResponseWriter, req *http.Request, tasks Tasks) {
 	}
 }
 
-func jsonFile(w http.ResponseWriter, req *http.Request, tasks Tasks) {
+func jsonFile(w http.ResponseWriter, req *http.Request, tasks *Tasks) {
 	id, ok := mux.Vars(req)["id"]
 	if !ok {
 		sendErr(w, http.StatusBadRequest, fmt.Errorf("no id specified"))
@@ -350,7 +365,7 @@ func jsonFile(w http.ResponseWriter, req *http.Request, tasks Tasks) {
 		return
 	}
 
-	f, err := os.Open(filepath.Join("data", task.Id, link.Name))
+	f, err := os.Open(filepath.Join(dataRootDir, tasks.User.Name, task.Id, link.Name))
 	if err != nil {
 		sendErr(w, http.StatusInternalServerError, err)
 		return

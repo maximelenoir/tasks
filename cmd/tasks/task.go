@@ -62,6 +62,7 @@ func (t Task) Match(terms []string) bool {
 
 type Tasks struct {
 	Tasks map[string]Task
+	User  *User
 	m     sync.RWMutex
 }
 
@@ -85,7 +86,7 @@ func (t Tasks) Delete(task Task) {
 }
 
 func (t Tasks) Save() {
-	filename := filepath.Join(dataRootDir, tasksFilename)
+	filename := filepath.Join(dataRootDir, t.User.Name, tasksFilename)
 
 	f, err := os.Create(filename)
 	if err != nil {
@@ -103,12 +104,14 @@ func (t Tasks) Save() {
 	log.Printf("tasks saved under %s\n", filename)
 }
 
-func (t Tasks) Load() {
-	if err := os.MkdirAll(dataRootDir, 0755); err != nil {
+func (t *Tasks) Load() {
+	t.Tasks = make(map[string]Task)
+
+	if err := os.MkdirAll(filepath.Join(dataRootDir, t.User.Name), 0755); err != nil {
 		log.Printf("could not create data dir: %s\n", err)
 		return
 	}
-	filename := filepath.Join(dataRootDir, tasksFilename)
+	filename := filepath.Join(dataRootDir, t.User.Name, tasksFilename)
 
 	f, err := os.Open(filename)
 	if err != nil {
@@ -129,7 +132,7 @@ func (t Tasks) Load() {
 		t.Tasks[task.Id] = task
 	}
 
-	log.Printf("tasks loaded from %s\n", filename)
+	log.Printf("%d tasks loaded from %s\n", len(tasks), filename)
 }
 
 func (t Tasks) Slice() []Task {

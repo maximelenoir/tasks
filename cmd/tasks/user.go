@@ -15,6 +15,10 @@ var (
 	users  map[string]*User  // Name => User
 	logged map[string]string // Tokens => Name
 	userdb string
+
+	defaultUser = &User{
+		Name: "default",
+	}
 )
 
 func init() {
@@ -53,16 +57,16 @@ func LoadUsers() {
 	logged = make(map[string]string)
 }
 
-func Accept(token string) bool {
+func Accept(token string) (*User, bool) {
 	if nouser {
-		return true
+		return defaultUser, true
 	}
 	name, ok := logged[token]
 	if !ok {
-		return false
+		return nil, false
 	}
 	user, ok := users[name]
-	return ok && user.Until.After(time.Now())
+	return user, ok && user.Until.After(time.Now())
 }
 
 func Connect(user, password string) (*User, bool) {
