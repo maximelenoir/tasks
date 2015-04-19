@@ -87,7 +87,7 @@ func logReq(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		t := time.Now()
 		h(w, req)
-		log.Println(req.Host, req.URL.Path, time.Since(t))
+		log.Println(req.RemoteAddr, req.URL.Path, time.Since(t))
 	}
 }
 
