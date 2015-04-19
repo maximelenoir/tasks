@@ -10,6 +10,7 @@ App = Ember.Application.create({
 App.deferReadiness();
 
 App.Router.map(function() {
+	this.resource('logoff');
 	this.resource('tasks');
 	this.resource('help');
 });
@@ -39,3 +40,10 @@ window.onload = function() {
 if (Notification.permission != "granted") {
 	Notification.requestPermission();
 }
+
+App.LogoffRoute = Ember.Route.extend({
+	beforeModel: function() {
+		document.cookie = 'token=;';
+		document.location = '/login';
+	},
+});
