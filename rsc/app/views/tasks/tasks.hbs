@@ -1,9 +1,7 @@
-<form id="search">
-	<div class="form-group has-feedback">
-	{{input class="form-control" value=search action="newTask" on="enter" placeholder="Search and create..."}}
-	<span class="form-control-feedback glyphicon glyphicon-search"></span>
-	</div>
-</form>
+<div class="form-group has-feedback">
+{{input class="form-control" value=search action="newTask" on="enter" placeholder="Search and create..."}}
+<span class="form-control-feedback glyphicon glyphicon-search"></span>
+</div>
 {{#if controller}}
 {{view "task-container" tasks=controller}}
 {{else}}
