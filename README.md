@@ -8,11 +8,15 @@
 
 ### Install
 ```bash
-cd $GOPATH
-go get github.com/maximelenoir/tasks/cmd/tasks
+$ cd $GOPATH/src
+$ git clone https://github.com/maximelenoir/tasks
+$ cd tasks
+$ go get ./cmd/tasks
+$ go build ./cmd/tasks
 ```
 
 ### Play
 ```bash
-$GOPATH/bin/tasks -addr=:8080 -data-dir=/path/to/data 
+$ ./adduser.sh
+$ ./tasks -addr=:8080 -data-dir=/path/to/data 
 ```
