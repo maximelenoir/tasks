@@ -44,7 +44,7 @@ func (t *Task) Update() {
 	t.content = &Trie{}
 	for _, indexed := range []string{t.Name, t.Details} {
 		for _, chunk := range strings.FieldsFunc(indexed, func(r rune) bool {
-			return unicode.IsPunct(r) || unicode.IsSpace(r)
+			return unicode.IsPunct(r) || unicode.IsSpace(r) || unicode.IsSymbol(r)
 		}) {
 			t.content.Add(chunk)
 		}
