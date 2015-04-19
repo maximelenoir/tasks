@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>Tasks</title>
+		<link rel="stylesheet" type="text/css" href="/rsc/vendor/bootstrap/dist/css/bootstrap.css">
+	</head>
+	<body>
+		<style rel="styleshee">
+			.input-group>input[type=text] {
+				border-top-left-radius: 3px!important;
+				border-top-right-radius: 3px!important;
+				border-bottom-left-radius: 0!important;
+				border-bottom-right-radius: 0!important;
+			}
+			.input-group>input[type=password] {
+				border-top: 0;
+				border-top-left-radius: 0!important;
+				border-top-right-radius: 0!important;
+				border-bottom-left-radius: 3px!important;
+				border-bottom-right-radius: 3px!important;
+				margin-bottom: 20px;
+			}
+		</style>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-4"></div>
+				<div class="col-md-4">
+					<h2>Log in</h2>
+					<form method="POST">
+						<div class="input-group">
+							<input type="text" class="form-control" placeholder="Usename" name="user" required autofocus>
+							<input type="password" class="form-control" placeholder="Password" name="password" required>
+							<button class="btn btn-large btn-primary btn-block" type="submit">Log in</button>
+						</div>
+					</form>
+				</div>
+				<div class="col-md-4"></div>
+			</div>
+		</div>
+	</body>
+</html>

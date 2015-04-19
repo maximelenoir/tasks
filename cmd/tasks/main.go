@@ -30,26 +30,30 @@ func init() {
 	flag.BoolVar(&https, "https", false, "Enable HTTPS")
 	flag.StringVar(&tlsCert, "tsl-cert", "etc/server.crt", "TLS certificate")
 	flag.StringVar(&tlsKey, "tsl-key", "etc/server.key", "TLS private key")
-	flag.Parse()
 }
 
 func main() {
+	flag.Parse()
+
 	tasks := Tasks{
 		Tasks: make(map[string]Task),
 	}
 	tasks.Load()
 	defer tasks.Save()
 
+	LoadUsers()
+
 	r := mux.NewRouter()
-	r.HandleFunc("/", logReq(htmlIndex))
-	r.HandleFunc("/new", logReq(hookTasks(tasks, jsonNewTask)))
-	r.HandleFunc("/tasks", logReq(hookTasks(tasks, jsonTasks)))
-	r.HandleFunc("/search", logReq(hookTasks(tasks, jsonSearch)))
-	r.HandleFunc("/save/{id}", logReq(hookTasks(tasks, jsonSave)))
-	r.HandleFunc("/delete/{id}", logReq(hookTasks(tasks, jsonDelete)))
-	r.HandleFunc("/link/{id}", logReq(hookTasks(tasks, jsonLink)))
-	r.HandleFunc("/unlink/{id}/{link}", logReq(hookTasks(tasks, jsonUnlink)))
-	r.HandleFunc("/file/{id}/{link}", logReq(hookTasks(tasks, jsonFile)))
+	r.HandleFunc("/", logReq(ensureLoggedIn(htmlIndex)))
+	r.HandleFunc("/login", logReq(htmlLogin))
+	r.HandleFunc("/new", logReq(ensureLoggedIn(hookTasks(tasks, jsonNewTask))))
+	r.HandleFunc("/tasks", logReq(ensureLoggedIn(hookTasks(tasks, jsonTasks))))
+	r.HandleFunc("/search", logReq(ensureLoggedIn(hookTasks(tasks, jsonSearch))))
+	r.HandleFunc("/save/{id}", logReq(ensureLoggedIn(hookTasks(tasks, jsonSave))))
+	r.HandleFunc("/delete/{id}", logReq(ensureLoggedIn(hookTasks(tasks, jsonDelete))))
+	r.HandleFunc("/link/{id}", logReq(ensureLoggedIn(hookTasks(tasks, jsonLink))))
+	r.HandleFunc("/unlink/{id}/{link}", logReq(ensureLoggedIn(hookTasks(tasks, jsonUnlink))))
+	r.HandleFunc("/file/{id}/{link}", logReq(ensureLoggedIn(hookTasks(tasks, jsonFile))))
 	r.PathPrefix("/rsc").Handler(http.StripPrefix("/", http.FileServer(http.Dir("."))))
 
 	srv := http.Server{
@@ -92,8 +96,41 @@ func hookTasks(tasks Tasks, h handlerTasks) http.HandlerFunc {
 	}
 }
 
+func ensureLoggedIn(h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		token, err := req.Cookie("token")
+		if err != nil || !Accept(token.Value) {
+			http.Redirect(w, req, "/login", http.StatusTemporaryRedirect)
+			return
+		}
+		h(w, req)
+	}
+}
+
 func htmlIndex(w http.ResponseWriter, req *http.Request) {
 	http.ServeFile(w, req, "rsc/app/index.html")
+}
+
+func htmlLogin(w http.ResponseWriter, req *http.Request) {
+	if err := req.ParseForm(); err != nil {
+		sendErr(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	user := req.Form.Get("user")
+	pwd := req.Form.Get("password")
+	u, ok := Connect(user, pwd)
+	if !ok {
+		http.ServeFile(w, req, "rsc/app/login.html")
+		return
+	}
+	http.SetCookie(w, &http.Cookie{
+		Name:    "token",
+		Value:   u.Token,
+		Expires: u.Until,
+		Path:    "/",
+	})
+	http.Redirect(w, req, "/", http.StatusTemporaryRedirect)
 }
 
 func jsonNewTask(w http.ResponseWriter, req *http.Request, tasks Tasks) {
