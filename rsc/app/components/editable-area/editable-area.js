@@ -69,6 +69,12 @@ App.EditableAreaView = Ember.View.extend({
 			this.editingTimeout = null;
 		}
 	},
+	touchMove: function(ev) {
+		if (this.editingTimeout) {
+			window.clearTimeout(this.editingTimeout);
+			this.editingTimeout = null;
+		}
+	},
 	startEditing: function() {
 		if (this.get('readOnly')) { return; }
 		if (!this.get('editing')) {
