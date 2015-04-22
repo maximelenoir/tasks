@@ -9,9 +9,9 @@
 			<span class="separator"></span>
 			<small>
 				{{#if view.task.done}}
-				{{ago view.task.completedOn}}
+				{{ago view.completedOn}}
 				{{else}}
-				{{ago view.task.updatedOn}}
+				{{ago view.updatedOn}}
 				{{/if}}
 			</small>
 			{{datetime alarmOn=view.task.alarmOn title=view.task.name readOnly=view.readOnly}}

@@ -12,8 +12,17 @@ App.TasksRoute = Ember.Route.extend({
 
 App.TasksController = Ember.ArrayController.extend({
 	search: null,
+	tick: 0,
+	tickInterval: null,
 	sortAscending: true,
 	sortProperties: ['pinned', 'alarmOn', 'triggered', 'updatedOn', 'done'], // Observes only.
+	init: function() {
+		this._super();
+		var self = this;
+		this.tickInterval = window.setInterval(function() {
+			self.incrementProperty('tick');
+		}, 60 * 1000);
+	},
 	searching: function() {
 		return this.search != null && this.search.length != 0;
 	}.property('search'),
@@ -71,6 +80,10 @@ App.TasksController = Ember.ArrayController.extend({
 			});
 		});
 	}.observes('search'),
+	willDestroy: function() {
+		this._super();
+		if (this.tickInterval) { window.clearInterval(this.tickInterval); }
+	},
 	actions: {
 		newTask: function() {
 			if (this.search == null) { return; }

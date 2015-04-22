@@ -5,7 +5,7 @@
 {{#if controller}}
 <div class="task-container">
 {{#each task in controller}}
-	{{view "task" task=task readOnly=task.done}}
+	{{view "task" task=task readOnly=task.done tick=controller.tick}}
 {{/each}}
 </div>
 {{else}}

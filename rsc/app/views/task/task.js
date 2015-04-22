@@ -5,9 +5,17 @@ App.TaskView = Ember.View.extend({
 	classNames: ['task'],
 	attributeBindings: ['id:data-task-id'],
 	readOnly: false,
+	tick: null,
+
 	id: function() {
 		return this.task.get('id');
 	}.property('task.id'),
+	completedOn: function() {
+		return this.task.get('completedOn');
+	}.property('task.completedOn', 'tick'),
+	updatedOn: function() {
+		return this.task.get('updatedOn');
+	}.property('task.updatedOn', 'tick'),
 	actions: {
 		toggleDone: function() {
 			if (this.get('readOnly')) { return; }
