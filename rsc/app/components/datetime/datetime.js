@@ -63,7 +63,6 @@ App.DatetimeView = Ember.View.extend({
 	willDestroy: function() {
 		this._super();
 		if (this.alarm) { window.clearTimeout(this.alarm); }
-		if (this.snooze) { window.clearInterval(this.snooze); }
 	},
 	done: function() {
 		this.container.remove();

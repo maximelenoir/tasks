@@ -3,7 +3,11 @@
 <span class="form-control-feedback glyphicon glyphicon-search"></span>
 </div>
 {{#if controller}}
-{{view "task-container" tasks=controller}}
+<div class="task-container">
+{{#each task in controller}}
+	{{view "task" task=task readOnly=task.done}}
+{{/each}}
+</div>
 {{else}}
 <h1 class="text-center">No task 😃</h1>
 {{/if}}
