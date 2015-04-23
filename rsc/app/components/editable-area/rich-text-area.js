@@ -39,6 +39,18 @@ App.RichTextAreaView = Ember.View.extend({
 				.replace(/</g, '&lt;')
 				.replace(/>/g, '&gt;')
 				.replace(/\\./g, function(t) { return etxt(t.slice(1)); })
+				.replace(/\b(https?|ftp):\/\/[0-9a-zA-Z:@\/_%.?&#=-]+/g, function(t) {
+					return '<a href="'+t.slice(0)+'">'+
+						etxt(t.slice(0))+
+						'</a>';
+				})
+				.replace(/[^ ]+:<a href="([^"]+)">[^<]+<\/a>/g, function(t) {
+					var parts = t.split(':');
+					var name = parts[0];
+					var url = parts.slice(1).join(':').split('>')[0];
+					url = url.slice(9, url.length-1);
+					return '<a href="'+url+'">'+etxt(name)+'</a>';
+				})
 				.replace(/@[^ ]+\b/g, function(t) {
 					var link = t.slice(1);
 					if (link in links) {
@@ -95,18 +107,6 @@ App.RichTextAreaView = Ember.View.extend({
 				.replace(/^### .*$/g, function(t) { lf = false; return '<h3>'+t.slice(4)+'</h3>'; })
 				.replace(/^## .*$/g, function(t) { lf = false; return '<h2>'+t.slice(3)+'</h2>'; })
 				.replace(/^# .*$/g, function(t) { lf = false; return '<h1>'+t.slice(2)+'</h1>'; })
-				.replace(/[^ ]+:https?:\/\/[^ <>]+[A-Za-z]/g, function(t) {
-					var parts = t.split(':');
-					var name = parts[0];
-					var url = parts.slice(1).join(':');
-					return '<a href="'+url+'">'+etxt(name)+'</a>';
-				})
-				.replace(/[^"]https?:\/\/[^ <>]+[A-Za-z]/g, function(t) {
-					return t[0] +
-						'<a href="'+t.slice(1)+'">'+
-						etxt(t.slice(1))+
-						'</a>';
-				})
 				.replace(/todo:/i, '<span class="label label-warning">TODO</span>')
 				.replace(/fixme:/i, '<span class="label label-danger">FIXME</span>')
 				.replace(/^---$/g, function(_) { lf = false; return '<hr/>'; });
