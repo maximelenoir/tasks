@@ -63,7 +63,12 @@ App.RichTextAreaView = Ember.View.extend({
 					}
 					return t;
 				})
-				.replace(/^[^*][^ ].*$/, function(t) { state.listing = 0; return t; })
+				.replace(/^.*$/, function(t) {
+					if (t.slice(0, 2) != '* ') {
+						state.listing = 0;
+					}
+					return t;
+				})
 				.replace(/^[*]+ .*$/, function(t) {
 					lf = false;
 					var level = t.split(/\B/).reduce(function(c, w) {
