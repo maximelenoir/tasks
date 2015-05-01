@@ -2,11 +2,6 @@
 	margin-left: 15px;
 	margin-right: 15px;
 }
-@media (min-width: 768px) {
-	#search {
-		margin: auto;
-	}
-}
 .task-container {
 	bottom: 0px;
 	display: flex;
