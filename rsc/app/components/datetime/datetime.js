@@ -48,21 +48,30 @@ App.DatetimeView = Ember.View.extend({
 		}
 		var now = moment();
 		if (now < alarmOn) {
-			var waitFor = (alarmOn - now);
 			var self = this;
-			this.alarm = window.setTimeout(function() {
-				self.incrementProperty('revision');
-				new Notification(
-					'«' + self.title + '» is due now (' +
-					alarmOn.format('MMMM Do YYYY @ HH:mm') + ')'
-				);
-				self.get('parentView').send('alarmTriggered');
-			}, waitFor);
+			// setTimeout's delay is implemented with an int32 on Chrome/FF/...
+			// Therefore, for long delays, it is necessary to call setTimeout
+			// multiple times until alarmOn is reached.
+			var alarmFn = function() {
+				var now = moment();
+				if (alarmOn <= now) {
+					self.incrementProperty('revision');
+					new Notification(
+						'«' + self.title + '» is due now (' +
+						alarmOn.format('MMMM Do YYYY @ HH:mm') + ')'
+					);
+					self.get('parentView').send('alarmTriggered');
+				} else {
+					var waitFor = Math.min(alarmOn - now, Math.pow(2, 31)-1);
+					self.alarmtimeout = window.setTimeout(alarmFn, waitFor);
+				}
+			};
+			alarmFn();
 		}
 	}.observes('alarmOn'),
 	willDestroy: function() {
 		this._super();
-		if (this.alarm) { window.clearTimeout(this.alarm); }
+		if (this.alarmtimeout) { window.clearTimeout(this.alarmtimeout); }
 	},
 	done: function() {
 		this.container.remove();
