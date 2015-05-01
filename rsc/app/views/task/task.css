@@ -45,8 +45,8 @@
 .task .link-container span.label {
 	margin-right: 5px;
 }
-.task span.label a,
-.task span.label a:hover {
+span.label a,
+span.label a:hover {
 	text-decoration: none;
 	cursor: pointer;
 	color: #fff;
@@ -73,21 +73,21 @@
 	content: ' | ';
 	color: #ddd;
 }
-.task .done,
-.task .do:hover {
+.done,
+.do:hover {
 	color: #5cb85c;
 }
-.task .do,
-.task .done:hover,
-.task .pin,
-.task .pinned:hover,
-.task .remove {
+.do,
+.done:hover,
+.pin,
+.pinned:hover,
+.remove {
 	color: #777;
 }
-.task .remove:hover {
+.remove:hover {
 	color: #d9534f;
 }
-.task .pinned,
-.task .pin:hover {
+.pinned,
+.pin:hover {
 	color: #337ab7;
 }
