@@ -1,7 +1,54 @@
+<h3 class="page-header">Usage</h3>
+<div class="container" style="margin:0!important;">
+	<div class="row">
+		<div class="col-md-4">
+			<p>
+				Double-cliking on the task title or body will allow you to edit it.
+				Have a look at the example task to see what how you can make your
+				description richer.
+			</p>
+			<p>
+				<i class="glyphicon glyphicon-ok clickable do"></i> :
+				Mark the task as done. The alarm, if any, will be cleared up.
+				Once in this state, the task become read-only, i.e. it can no
+				longer be edited or removed. The icon will light up
+				<i class="glyphicon glyphicon-ok clickable done"></i>
+				indicating its completion.
+			</p>
+			<p>
+				<i class="glyphicon glyphicon-time clickable program"></i> :
+				Set up an alarm for this task. Use this feature to program
+				reminders and help you organize your schedule. When an alarm
+				has been seen for a task, the icon will turn orange
+				<i class="glyphicon glyphicon-time clickable programmed"></i>.
+				Once the programmed time is reached, the alarm will send a
+				desktop notification and provide an alarm feedback
+				<i class="glyphicon glyphicon-time clickable triggered"></i>.
+				To stop the alarm, click the alarm again.
+			</p>
+			<p>
+				<i class="glyphicon glyphicon-pushpin clickable pin"></i> :
+				Pin a task to stay on top of the task heap. Click again to unpin.
+			</p>
+			<p>
+				<i class="glyphicon glyphicon-remove clickable remove"></i> :
+				Remove a task. This cannot be undone and all data will be forever lost,
+				so use with care. If you want to archive a task, use
+				<i class="glyphicon glyphicon-ok clickable do"></i> instead.
+			</p>
+			<p>
+				<span class="label label-default"><a><span class="glyphicon glyphicon-link"></span></a></span> :
+				Download the document link to the task. To link a document, simply drag
+				and drop it on a task. A copy will be uploaded to the server.
+			</p>
+		</div>
+		<div class="col-md-8">
+			{{view "task" task=controller.model readOnly=true}}
+		</div>
+	</div>
+</div>
+
 <h3 class="page-header">Known limitation</h3>
 The application was tested on Chrome and Firefox.
 Firefox does not provide persistance for notifications,
 therefore you might miss some important updates.
-
-<h3 class="page-header">Example of a task</h3>
-{{view "task" task=controller.model readOnly=true}}
